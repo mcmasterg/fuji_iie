@@ -33,4 +33,12 @@ module AppleIIePAL(
 
     always @(posedge clk_14M)
     clk_7M <= ~clk_7M;
+
+    ClockDivideByN #(
+        .N(14)
+    ) phi_0_divider(
+        .clk_in(clk_14M),
+        .reset(1'b0),
+        .clk_out(clk_phi_0)
+    );
 endmodule
