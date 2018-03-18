@@ -24,6 +24,26 @@ module FujiIIe(
     wire clk_7M;
     wire clk_q3;
     wire clk_phi_0;
+    wire clk_phi_1;
+    wire clk_phi_2;
+
+    MCL65 cpu(
+        .CORE_CLK(clk_core),
+        .CLK0(clk_phi_0),
+        .CLK1(clk_phi_1),
+        .CLK2(clk_phi_2),
+        .RESET_n(~reset),
+        .NMI_n(),
+        .IRQ_n(),
+        .SO(),
+        .SYNC(),
+        .RDWR_n(),
+        .READY(),
+        .A(),
+        .D(),
+        .DIR0(),
+        .DIR1()
+    );
 
     AppleIIePAL pal(
         .clk_14M(clk_14M),
