@@ -156,11 +156,17 @@ wire [31:0] rom_data;
 //
 //------------------------------------------------------------------------                  				  
 
-ROM_2Kx32		microcode_rom	
-  (
+Rom #(
+    .RAM_WIDTH(32),
+    .RAM_DEPTH(2048),
+    .INIT_FILE("microcode_rom.hex")
+) microcode_rom	(
     .clka		(CORE_CLK),
     .addra		(rom_address[10:0]),
-    .douta		(rom_data)
+    .douta		(rom_data),
+    .ena        (1'b1),
+    .regcea     (1'b1),
+    .rsta       (1'b0)
   );
   
 
