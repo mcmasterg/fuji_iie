@@ -18,7 +18,19 @@
 module FujiIIe(
     input clk_core,
     input clk_14M,
-    input reset
+    input reset,
+
+    // Diagnostics ROM socket
+    output diagnostics_rom_ce_n,
+    output diagnostics_rom_oe_n,
+    output [12:0] diagnostics_rom_a,
+    input [7:0] diagnostics_rom_d,
+
+    // Monitor ROM socket
+    output monitor_rom_ce_n,
+    output monitor_rom_oe_n,
+    output [12:0] monitor_rom_a,
+    input [7:0] monitor_rom_d
     );
 
     wire clk_7M;
@@ -26,6 +38,13 @@ module FujiIIe(
     wire clk_phi_0;
     wire clk_phi_1;
     wire clk_phi_2;
+
+    // Processor memory bus
+    wire [15:0] a;
+    wire [7:0] md;
+
+    wire romen1_n;
+    wire romen2_n;
 
     MCL65 cpu(
         .CORE_CLK(clk_core),
@@ -39,8 +58,8 @@ module FujiIIe(
         .SYNC(),
         .RDWR_n(),
         .READY(),
-        .A(),
-        .D(),
+        .A(a),
+        .D(md),
         .DIR0(),
         .DIR1()
     );
@@ -52,5 +71,14 @@ module FujiIIe(
         .clk_q3(clk_q3),
         .clk_phi_0(clk_phi_0)
     );
-    
+
+    assign diagnostics_rom_ce_n = 1'b0;
+    assign diagnostics_rom_oe_n = romen1_n;
+    assign diagnostics_rom_a = a[12:0];
+    assign diagnostics_rom_d = md;
+
+    assign monitor_rom_ce_n = 1'b0;
+    assign monitor_rom_oe_n = romen2_n;
+    assign monitor_rom_a = a[12:0];
+    assign monitor_rom_d = md;
 endmodule
