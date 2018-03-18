@@ -20,5 +20,17 @@ module FujiIIe(
     input clk_14M,
     input reset
     );
+
+    wire clk_7M;
+    wire clk_q3;
+    wire clk_phi_0;
+
+    AppleIIePAL pal(
+        .clk_14M(clk_14M),
+
+        .clk_7M(clk_7M),
+        .clk_q3(clk_q3),
+        .clk_phi_0(clk_phi_0)
+    );
     
 endmodule
