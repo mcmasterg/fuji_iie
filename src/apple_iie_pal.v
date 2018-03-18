@@ -41,4 +41,16 @@ module AppleIIePAL(
         .reset(1'b0),
         .clk_out(clk_phi_0)
     );
+
+    // Q3's asymmetric waveform edges are always aligned with positive edges
+    // of 14M. Counting those edges is sufficient to generate both periods of
+    // Q3.  RAS pulses high for 2 14M periods centered on Q3's rising edge.
+    reg [3:0] q3_counter;
+    always @(posedge clk_14M) begin
+        if (q3_counter < 4'd4) clk_q3 <= 1'b1;
+        else clk_q3 <= 1'b0;
+
+        if (q3_counter >= 4'd6) q3_counter <= 0;
+        else q3_counter <= q3_counter + 1;
+    end
 endmodule
