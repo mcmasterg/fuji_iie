@@ -1,0 +1,10 @@
+VIVADO ?= vivado
+
+target-project:
+	$(VIVADO) -mode batch -source $(TARGET_DIR)/create_project.tcl
+
+target-clean:
+	[[ ! -e $(BUILD_DIR)/basys3_fuji_iie.xpr ]] || $(VIVADO) -mode batch \
+		-source $(TARGET_DIR)/clean_ip.tcl \
+		$(BUILD_DIR)/basys3_fuji_iie.xpr
+	rm -rf vivado_* vivado.*
