@@ -96,6 +96,7 @@ set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$origin_dir/roms/apple_iie_diagnostics_rom.mem"]"\
  "[file normalize "$origin_dir/roms/apple_iie_monitor_rom.mem"]"\
+ "[file normalize "$origin_dir/src/apple_iie_memory_management_unit.v"]"\
  "[file normalize "$origin_dir/src/apple_iie_pal.v"]"\
  "[file normalize "$origin_dir/src/clock_divide_by_n.v"]"\
  "[file normalize "$origin_dir/src/fuji_iie.v"]"\
