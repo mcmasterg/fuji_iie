@@ -38,7 +38,7 @@ module Basys3FujiIIe(
         .clka(clk_14M),
         .addra(diagnostics_rom_a),
         .ena(~diagnostics_rom_ce_n),
-        .regcea(~diagnostics_rom_oe_n),
+        .oe(~diagnostics_rom_oe_n),
         .douta(diagnostics_rom_d)
     );
 
@@ -50,7 +50,7 @@ module Basys3FujiIIe(
         .clka(clk_14M),
         .addra(monitor_rom_a),
         .ena(~monitor_rom_ce_n),
-        .regcea(~monitor_rom_oe_n),
+        .oe(~monitor_rom_oe_n),
         .douta(monitor_rom_d)
     );
 

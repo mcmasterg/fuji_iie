@@ -165,8 +165,7 @@ Rom #(
     .addra		(rom_address[10:0]),
     .douta		(rom_data),
     .ena        (1'b1),
-    .regcea     (1'b1),
-    .rsta       (1'b0)
+    .oe         (1'b1)
   );
   
 
