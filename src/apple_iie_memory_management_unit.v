@@ -120,6 +120,7 @@ wire text_page1_aux_selected = soft_switch_80store ? soft_switch_page2 : main_ra
 wire hires_aux_selected = soft_switch_hires ? text_page1_aux_selected : main_ram_aux_selected;
 wire banked_mem_aux_selected = soft_switch_altzp;
 
+wire data_read_cycle = (rw_n && clk_phi_0 && ~clk_q3);
 
 assign ramen_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'h0200 && ~zero_page_aux_selected) ||
                    (cpu_request_address >= 16'h0200 && cpu_request_address < 16'h0400 && ~main_ram_aux_selected) ||
@@ -128,7 +129,7 @@ assign ramen_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'
                    (cpu_request_address >= 16'h2000 && cpu_request_address < 16'h4000 && ~hires_aux_selected) ||
                    (cpu_request_address >= 16'h4000 && cpu_request_address < 16'hc000 && ~main_ram_aux_selected) ||
                    (cpu_request_address >= 16'hd000 && banked_mem_ram_selected && ~banked_mem_aux_selected))) ? 1'b0 : 1'b1;
-assign romen1_n = (cpu_request_address >= 16'hd000 && banked_mem_rom_selected) ? 1'b0 : 1'b1;
+assign romen1_n = (data_read_cycle && cpu_request_address >= 16'hd000 && banked_mem_rom_selected) ? 1'b0 : 1'b1;
 assign romen2_n = romen1_n;
 assign en80_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'h0200 && zero_page_aux_selected) ||
                    (cpu_request_address >= 16'h0200 && cpu_request_address < 16'h0400 && main_ram_aux_selected) ||
@@ -139,6 +140,6 @@ assign en80_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'h
                    (cpu_request_address >= 16'hd000 && banked_mem_ram_selected && banked_mem_aux_selected))) ? 1'b0 : 1'b1;
 assign cxxx = (cpu_request_address[15:12] == 4'hc) ? 1'b1 : 1'b0;
 
-assign md7 = (clk_phi_0 && ~clk_q3 && cpu_request_address[15:4] == 16'hc01) ? md7_out : 1'bZ;
+assign md7 = (data_read_cycle && cpu_request_address[15:4] == 16'hc01) ? md7_out : 1'bZ;
 
 endmodule
