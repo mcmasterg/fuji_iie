@@ -42,6 +42,7 @@ module FujiIIe(
     // Processor memory bus
     wire [15:0] a;
     wire [7:0] md;
+    wire rdwr_n;
 
     wire romen1_n;
     wire romen2_n;
@@ -56,7 +57,7 @@ module FujiIIe(
         .IRQ_n(),
         .SO(),
         .SYNC(),
-        .RDWR_n(),
+        .RDWR_n(rdwr_n),
         .READY(),
         .A(a),
         .D(md),
@@ -70,6 +71,20 @@ module FujiIIe(
         .clk_7M(clk_7M),
         .clk_q3(clk_q3),
         .clk_phi_0(clk_phi_0)
+    );
+
+    AppleIIeMemoryManagementUnit mmu(
+        .clk_phi_0(clk_phi_0),
+        .clk_q3(clk_q3),
+
+        .a(a),
+        .md7(md[7]),
+        .rw_n(rdwr_n),
+
+        .inh_n(1'b1),
+
+        .romen1_n(romen1_n),
+        .romen2_n(romen2_n)
     );
 
     assign diagnostics_rom_ce_n = 1'b0;
