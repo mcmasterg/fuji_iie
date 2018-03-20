@@ -53,4 +53,42 @@ module AppleIIePAL(
         if (q3_counter >= 4'd6) q3_counter <= 0;
         else q3_counter <= q3_counter + 1;
     end
+
+    // RAS# goes high 2 14M cycles after Q3 goes low and remains high for
+    // 2 14M cycles.
+    reg pras_counter;
+    always @(posedge clk_14M) begin
+        if (~pras_n && ~clk_q3) begin
+            if (~pras_counter) pras_counter <= 1'b1;
+            else begin
+                pras_counter <= 1'b0;
+                pras_n <= 1'b1;
+            end
+        end
+        else if (pras_n) begin
+            if (~pras_counter) pras_counter <= 1'b1;
+            else begin
+                pras_counter <= 1'b0;
+                pras_n <= 1'b0;
+            end
+        end
+    end
+
+    // If RAMEN# is low, CAS# goes high on the rising edge of 14M when RAS# is
+    // also high.  It remains high for 3 14M periods.  If RAMEN# is high, CAS#
+    // is held high to prevent the RAMs from enabling their outputs.
+    reg [1:0] pcas_counter;
+    always @(posedge clk_14M) begin
+        if (ramen_n) pcas_n <= 1'b1;
+        else begin
+            if (pras_n) begin
+                pcas_counter <= 2'b0;
+                pcas_n <= 1'b1;
+            end
+            else if (pcas_n) begin
+                if (pcas_counter < 2'd2) pcas_counter <= pcas_counter + 1;
+                else pcas_n <= 1'b0;
+            end
+        end
+    end
 endmodule
