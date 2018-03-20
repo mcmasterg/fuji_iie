@@ -30,7 +30,14 @@ module FujiIIe(
     output monitor_rom_ce_n,
     output monitor_rom_oe_n,
     output [12:0] monitor_rom_a,
-    input [7:0] monitor_rom_d
+    input [7:0] monitor_rom_d,
+
+    // Main RAM
+    output [7:0] main_ram_ra,
+    output main_ram_ras_n,
+    output main_ram_cas_n,
+    output main_ram_rw_n,
+    inout [7:0] main_ram_d
     );
 
     wire clk_7M;
@@ -46,6 +53,12 @@ module FujiIIe(
 
     wire romen1_n;
     wire romen2_n;
+
+    // RAM Bus
+    wire ramen_n;
+    wire pras_n;
+    wire pcas_n;
+    wire [7:0] ra;
 
     MCL65 cpu(
         .CORE_CLK(clk_core),
@@ -70,7 +83,12 @@ module FujiIIe(
 
         .clk_7M(clk_7M),
         .clk_q3(clk_q3),
-        .clk_phi_0(clk_phi_0)
+        .clk_phi_0(clk_phi_0),
+
+        .clk_phi_1(clk_phi_1),
+        .ramen_n(ramen_n),
+        .pras_n(pras_n),
+        .pcas_n(pcas_n)
     );
 
     AppleIIeMemoryManagementUnit mmu(
@@ -82,6 +100,10 @@ module FujiIIe(
         .rw_n(rdwr_n),
 
         .inh_n(1'b1),
+
+        .ramen_n(ramen_n),
+        .pras_n(pras_n),
+        .ra(ra),
 
         .romen1_n(romen1_n),
         .romen2_n(romen2_n)
@@ -96,4 +118,9 @@ module FujiIIe(
     assign monitor_rom_oe_n = romen2_n;
     assign monitor_rom_a = a[12:0];
     assign monitor_rom_d = md;
+
+    assign main_ram_ra = ra;
+    assign main_ram_ras_n = pras_n;
+    assign main_ram_cas_n = pcas_n;
+    assign main_ram_d = md;
 endmodule
