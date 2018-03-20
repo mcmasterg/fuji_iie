@@ -8,7 +8,7 @@ module Rom #(
   input clka,                           // Clock
   input ena,                            // RAM Enable, for additional power savings, disable port when not in use
   input oe,                             // Output register enable
-  inout [RAM_WIDTH-1:0] douta           // ROM output data
+  output [RAM_WIDTH-1:0] douta           // ROM output data
 );
 
 reg [RAM_WIDTH-1:0] BRAM [RAM_DEPTH-1:0];
