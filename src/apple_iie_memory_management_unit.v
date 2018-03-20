@@ -2,13 +2,15 @@ module AppleIIeMemoryManagementUnit(
     input clk_phi_0,
     input clk_q3,
 
-    // Debug stap
-    input inh_n,
-
     // CPU bus
     input [15:0] a,
     output md7,
     input rw_n,
+
+    // Peripheral bus
+    input inh_n,
+    input dma_n,
+    output rw_245_n,
 
     // RAM address bus
     input pras_n,
@@ -21,10 +23,7 @@ module AppleIIeMemoryManagementUnit(
     output en80_n,
     output cxxx,
 
-    output dma_n,
-    output kbd_n,
-
-    output rw_245_n
+    output kbd_n
 );
 
 reg banked_mem_reads_ram;       // LCRAM
