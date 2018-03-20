@@ -27,8 +27,6 @@ module AppleIIeMemoryManagementUnit(
     output rw_245_n
 );
 
-reg [15:0] cpu_request_address;
-
 reg banked_mem_reads_ram;       // LCRAM
 reg banked_mem_writes_enabled;
 reg banked_mem_bank2_selected;  // BANK2
@@ -46,8 +44,6 @@ reg soft_switch_hires;
 // sample the bus on the negative edge which is almost the same as the positive edge
 // of Phi1.
 always @(negedge clk_phi_0) begin
-    cpu_request_address <= a;
-
     casez ({rw_n, a})
         {1'b0, 12'hc00, 4'b000?}: soft_switch_80store <= a[0];
         {1'b0, 12'hc00, 4'b001?}: soft_switch_ramrd <= a[0];
@@ -106,10 +102,8 @@ always @(negedge clk_phi_0) begin
     endcase
 end
 
-assign ra = (clk_phi_0 && pras_n) ? {cpu_request_address[8:7], cpu_request_address[5:0]} :
-             (clk_phi_0 && clk_q3) ? {cpu_request_address[15:13], banked_mem_bank2_selected,
-                                      cpu_request_address[11:10], cpu_request_address[6],
-                                      cpu_request_address[9]} : 8'bZ;
+assign ra = (clk_phi_0 && pras_n) ? {a[8:7], a[5:0]} :
+             (clk_phi_0 && clk_q3) ? {a[15:13], banked_mem_bank2_selected, a[11:10], a[6], a[9]} : 8'bZ;
 
 wire banked_mem_ram_selected = (rw_n && banked_mem_reads_ram) || (~rw_n && banked_mem_writes_enabled);
 wire banked_mem_rom_selected = (rw_n && ~banked_mem_reads_ram);
@@ -122,24 +116,24 @@ wire banked_mem_aux_selected = soft_switch_altzp;
 
 wire data_read_cycle = (rw_n && clk_phi_0 && ~clk_q3);
 
-assign ramen_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'h0200 && ~zero_page_aux_selected) ||
-                   (cpu_request_address >= 16'h0200 && cpu_request_address < 16'h0400 && ~main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'h0400 && cpu_request_address < 16'h0800 && ~text_page1_aux_selected) ||
-                   (cpu_request_address >= 16'h0800 && cpu_request_address < 16'h2000 && ~main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'h2000 && cpu_request_address < 16'h4000 && ~hires_aux_selected) ||
-                   (cpu_request_address >= 16'h4000 && cpu_request_address < 16'hc000 && ~main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'hd000 && banked_mem_ram_selected && ~banked_mem_aux_selected))) ? 1'b0 : 1'b1;
-assign romen1_n = (data_read_cycle && cpu_request_address >= 16'hd000 && banked_mem_rom_selected) ? 1'b0 : 1'b1;
+assign ramen_n = (((a >= 16'h0000 && a < 16'h0200 && ~zero_page_aux_selected) ||
+                   (a >= 16'h0200 && a < 16'h0400 && ~main_ram_aux_selected) ||
+                   (a >= 16'h0400 && a < 16'h0800 && ~text_page1_aux_selected) ||
+                   (a >= 16'h0800 && a < 16'h2000 && ~main_ram_aux_selected) ||
+                   (a >= 16'h2000 && a < 16'h4000 && ~hires_aux_selected) ||
+                   (a >= 16'h4000 && a < 16'hc000 && ~main_ram_aux_selected) ||
+                   (a >= 16'hd000 && banked_mem_ram_selected && ~banked_mem_aux_selected))) ? 1'b0 : 1'b1;
+assign en80_n = (((a >= 16'h0000 && a < 16'h0200 && zero_page_aux_selected) ||
+                  (a >= 16'h0200 && a < 16'h0400 && main_ram_aux_selected) ||
+                  (a >= 16'h0400 && a < 16'h0800 && text_page1_aux_selected) ||
+                  (a >= 16'h0800 && a < 16'h2000 && main_ram_aux_selected) ||
+                  (a >= 16'h2000 && a < 16'h4000 && hires_aux_selected) ||
+                  (a >= 16'h4000 && a < 16'hc000 && main_ram_aux_selected) ||
+                  (a >= 16'hd000 && banked_mem_ram_selected && banked_mem_aux_selected))) ? 1'b0 : 1'b1;
+assign romen1_n = (data_read_cycle && a >= 16'hd000 && banked_mem_rom_selected) ? 1'b0 : 1'b1;
 assign romen2_n = romen1_n;
-assign en80_n = (((cpu_request_address >= 16'h0000 && cpu_request_address < 16'h0200 && zero_page_aux_selected) ||
-                   (cpu_request_address >= 16'h0200 && cpu_request_address < 16'h0400 && main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'h0400 && cpu_request_address < 16'h0800 && text_page1_aux_selected) ||
-                   (cpu_request_address >= 16'h0800 && cpu_request_address < 16'h2000 && main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'h2000 && cpu_request_address < 16'h4000 && hires_aux_selected) ||
-                   (cpu_request_address >= 16'h4000 && cpu_request_address < 16'hc000 && main_ram_aux_selected) ||
-                   (cpu_request_address >= 16'hd000 && banked_mem_ram_selected && banked_mem_aux_selected))) ? 1'b0 : 1'b1;
-assign cxxx = (cpu_request_address[15:12] == 4'hc) ? 1'b1 : 1'b0;
+assign cxxx = (a[15:12] == 4'hc) ? 1'b1 : 1'b0;
 
-assign md7 = (data_read_cycle && cpu_request_address[15:4] == 16'hc01) ? md7_out : 1'bZ;
+assign md7 = (data_read_cycle && a[15:4] == 16'hc01) ? md7_out : 1'bZ;
 
 endmodule
