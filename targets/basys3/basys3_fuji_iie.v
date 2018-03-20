@@ -1,19 +1,23 @@
 /* Target-specific adapter for Digilent Basys3
  *
  * Implementation notes:
- *  - 14.318MHz system clock is derived from 100MHz osciallator using 7-series PLL
+ *  - Clocks derived from 100MHz osciallator using 7-series PLL
+ *    - 100MHz Basys3 system components clock
+ *    - 14.318MHz Apple IIe system clock
  *  - ROMs are implmented using the Rom module which will infer block RAMs
  */
 
 module Basys3FujiIIe(
-    input clk_100MHz,
+    input clk_in_100MHz,
     input button_reset
     );
 
+    wire clk_100M;
     wire clk_14M;
 
     Basys3ClockGenerator clock_generator(
-        .clk_100MHz(clk_100MHz),
+        .clk_in_100MHz(clk_in_100MHz),
+        .clk_100M(clk_100M),
         .clk_14M(clk_14M),
         .reset(button_reset)
     );
@@ -55,7 +59,7 @@ module Basys3FujiIIe(
     );
 
     FujiIIe motherboard(
-        .clk_core(clk_100MHz),
+        .clk_core(clk_100M),
         .clk_14M(clk_14M),
         .reset(button_reset),
 

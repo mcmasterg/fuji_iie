@@ -158,14 +158,6 @@ set_property -name "file_type" -value "XDC" -objects $file_obj
 set_property -name "scoped_to_ref" -value "MCL65" -objects $file_obj
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/targets/basys3/basys3_clocks.xdc"]"
-set file_added [add_files -norecurse -fileset $obj $file]
-set file "$origin_dir/targets/basys3/basys3_clocks.xdc"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
-set_property -name "file_type" -value "XDC" -objects $file_obj
-
-# Add/Import constrs file and set constrs file properties
 set file "[file normalize "$origin_dir/targets/basys3/basys3_pins.xdc"]"
 set file_added [add_files -norecurse -fileset $obj $file]
 set file "$origin_dir/targets/basys3/basys3_pins.xdc"
