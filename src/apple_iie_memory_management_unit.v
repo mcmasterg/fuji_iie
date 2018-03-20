@@ -101,9 +101,6 @@ always @(negedge clk_phi_0) begin
         {1'b1, 16'hc015}: md7_out <= soft_switch_slotcxrom;
         {1'b1, 16'hc016}: md7_out <= soft_switch_altzp;
         {1'b1, 16'hc017}: md7_out <= soft_switch_slotc3rom;
-        {1'b1, 16'hc018}: md7_out <= soft_switch_80store;
-        {1'b1, 16'hc01c}: md7_out <= soft_switch_page2;
-        {1'b1, 16'hc01d}: md7_out <= soft_switch_hires;
     endcase
 end
 
